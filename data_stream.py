@@ -64,6 +64,7 @@ def run_spark_job(spark):
     query = (
         agg_df
             .writeStream
+            .trigger(processingTime="2 seconds") \
             .format("console")  # memory = store in-memory table (for testing only in Spark 2.0)
             .queryName("counts")  # counts = name of the in-memory table
             .outputMode("complete")  # complete = all the counts should be in the table
@@ -72,7 +73,7 @@ def run_spark_job(spark):
 
     # DONE attach a ProgressReporter
     query.awaitTermination()
-
+    
     # DONE get the right radio code json path
     radio_code_json_filepath = "radio_code.json"
     radio_code_df = spark.read.json(
@@ -91,13 +92,13 @@ def run_spark_job(spark):
     join_query = agg_df.join(other=radio_code_df, on="disposition", how='inner') \
         .select("original_crime_type_name", "disposition", "description", "count") \
         .writeStream \
+        .trigger(processingTime='2 seconds') \
         .format("console") \
         .queryName("counts_joined") \
         .outputMode("complete") \
         .start()
-
+    
     join_query.awaitTermination()
-
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
@@ -107,8 +108,8 @@ if __name__ == "__main__":
         .builder \
         .master("local[*]") \
         .config("spark.ui.port", 3000) \
-        .config("spark.streaming.kafka.maxRatePerPartition", 20) \
-        .config("spark.streaming.receiver.maxRate", 0) \
+        .config("spark.streaming.blockInterval", "50ms") \
+        .config("spark.streaming.kafka.minRatePerPartition", 50) \
         .appName("KafkaSparkStructuredStreaming") \
         .getOrCreate()
 
