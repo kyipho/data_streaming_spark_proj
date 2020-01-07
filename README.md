@@ -26,6 +26,8 @@ Questions:
 ----------
 1. How did changing values on the SparkSession property parameters affect the throughput and latency of the data?
 
+Reducing `spark.streaming.blockInterval`, increasing `spark.streaming.kafka.minRatePerPartition` and reducing batch interval with `trigger(processingTime='')` increased the throughput of the data.
+
 2. What were the 2-3 most efficient SparkSession property key/value pairs? Through testing multiple variations on values, how can you tell these were the most optimal?
 
-Attempted to increase throughput by setting `.config("spark.streaming.blockInterval", "50ms")`, `.config("spark.streaming.kafka.minRatePerPartition", 50)`, and `trigger(processingTime='2 seconds')`
+Implementing these changes 1 by 1 and viewing the progress report, it seemed that changing `trigger` was the most optimal, followed by `minRatePerPartition` and then `blockInterval`.
