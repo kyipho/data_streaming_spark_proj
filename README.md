@@ -15,11 +15,12 @@ In separate terminals:
 1. `cd config && /usr/bin/zookeeper-server-start zookeeper.properties`
 2. `cd config && /usr/bin/kafka-server-start server.properties`
 3. `python kafka_server.py` to start producing data
-4. `kafka-console-consumer --bootstrap-server localhost:9092 --topic org.sf.crime.stats --from-beginning` to see data produced from step 3.
-5. To see data produced from step 3:
-    `python consumer_server.py`
-6. To submit a Spark job:
-    `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.4 --master local[*] data_stream.py` 
+5. To see data produced from step 3:  
+    `python consumer_server.py`  
+    or  
+    `kafka-console-consumer --bootstrap-server localhost:9092 --topic org.sf.crime.stats --from-beginning`
+6. To submit a Spark job:  
+    `spark-submit --packages org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.4 --master local[*] data_stream.py`  
     Click on 'Preview' to go to Spark UI.
 
 Questions:
